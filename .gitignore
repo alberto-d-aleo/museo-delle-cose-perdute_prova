@@ -1,0 +1,18 @@
+# Database SQLite locale
+museo.sqlite
+museo.sqlite-shm
+museo.sqlite-wal
+museo.sqlite-journal
+
+# Dipendenze Node.js
+node_modules/
+
+# Variabili d'ambiente e credenziali
+.env
+.env.*
+
+# File di sistema macOS
+.DS_Store
+
+# File di log
+*.log

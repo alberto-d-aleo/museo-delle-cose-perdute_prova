@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <!-- Impostazioni principali della pagina -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Titolo e descrizione del sito -->
+    <title>Museo delle Cose Perdute</title>
+    <meta
+      name="description"
+      content="Piattaforma digitale per segnalare, ritrovare e restituire oggetti smarriti."
+    />
+
+    <!-- Libreria Leaflet per le mappe interattive -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <!-- Foglio di stile principale -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- Intestazione fissa con menu, logo, notifiche e utente -->
+    <header class="site-header">
+      <!-- Pulsante hamburger per aprire il menu laterale -->
+      <button
+        class="menu-button"
+        id="menuButton"
+        aria-label="Apri menu"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- Logo e nome del progetto -->
+      <button class="brand" data-section="home">
+        <span class="brand-mark">MCP</span>
+        <span class="brand-name">Museo delle Cose Perdute</span>
+      </button>
+
+      <!-- Area utente e notifiche -->
+      <div class="header-right">
+        <button class="notification-button hidden" id="notificationButton">
+          Notifiche
+          <span class="counter" id="notificationCounter">0</span>
+        </button>
+
+        <span id="headerUser">Archivio digitale</span>
+      </div>
+    </header>
+
+    <!-- Sfondo oscurato mostrato quando il menu è aperto -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- Menu laterale di navigazione -->
+    <aside class="side-menu" id="sideMenu">
+      <!-- Intestazione e chiusura del menu -->
+      <div class="menu-top">
+        <span>MENU</span>
+        <button id="closeMenu" aria-label="Chiudi menu">×</button>
+      </div>
+
+      <!-- Collegamenti alle principali sezioni -->
+      <nav>
+        <button data-section="home">Home</button>
+        <button data-section="archive">Archivio</button>
+        <button data-section="mapPage">Mappa</button>
+        <button data-section="newReport">Nuova segnalazione</button>
+
+        <!-- Sezioni disponibili solo dopo l'accesso -->
+        <button data-section="dashboard" class="auth-only hidden">
+          Dashboard
+        </button>
+        <button data-section="matches" class="auth-only hidden">Match</button>
+
+        <button data-section="messages" class="auth-only hidden">
+          Messaggi
+          <span class="counter" id="messageCounter">0</span>
+        </button>
+
+        <!-- Sezione disponibile solo ai moderatori -->
+        <button data-section="moderation" class="moderator-only hidden">
+          Moderazione
+        </button>
+      </nav>
+
+      <!-- Comandi per autenticazione e logout -->
+      <div class="menu-account">
+        <button data-section="login" id="loginMenuButton">Accedi</button>
+        <button data-section="register" id="registerMenuButton">
+          Registrati
+        </button>
+        <button id="logoutButton" class="hidden">Esci</button>
+      </div>
+    </aside>
+
+    <!-- Contenuto principale dell'applicazione -->
+    <main>
+      <!-- ==================== HOME ==================== -->
+      <section id="home" class="page-section active hero">
+        <!-- Presentazione principale del progetto -->
+        <div class="hero-content">
+          <p class="eyebrow">
+            ARCHIVIO DIGITALE · OGGETTI SMARRITI E RITROVATI
+          </p>
+
+          <h1>
+            Museo delle<br />
+            Cose Perdute
+          </h1>
+
+          <p class="hero-text">
+            Un archivio digitale dedicato alle cose che perdiamo, ritroviamo e,
+            qualche volta, riusciamo a restituire.
+          </p>
+
+          <!-- Azioni principali della homepage -->
+          <div class="hero-actions">
+            <button class="button light" data-section="archive">
+              Esplora l'archivio
+            </button>
+
+            <button class="button outline" data-section="newReport">
+              Pubblica una segnalazione
+            </button>
+          </div>
+        </div>
+
+        <!-- Elemento grafico decorativo -->
+        <div class="hero-number">01</div>
+      </section>
+
+      <!-- ==================== ARCHIVIO ==================== -->
+      <section id="archive" class="page-section content-section">
+        <!-- Titolo e numero delle segnalazioni visualizzate -->
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">COLLEZIONE PUBBLICA</p>
+            <h2>Archivio</h2>
+          </div>
+
+          <span id="archiveCount">0 segnalazioni</span>
+        </div>
+
+        <!-- Filtri per cercare le segnalazioni -->
+        <div class="filters">
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Cerca titolo, descrizione..."
+          />
+
+          <select id="filterType">
+            <option value="">Smarriti e ritrovati</option>
+            <option value="lost">Smarriti</option>
+            <option value="found">Ritrovati</option>
+          </select>
+
+          <select id="filterCategory">
+            <option value="">Tutte le categorie</option>
+            <option value="Chiavi">Chiavi</option>
+            <option value="Documenti">Documenti</option>
+            <option value="Elettronica">Elettronica</option>
+            <option value="Abbigliamento">Abbigliamento</option>
+            <option value="Accessori">Accessori</option>
+            <option value="Libri">Libri</option>
+            <option value="Altro">Altro</option>
+          </select>
+
+          <input type="text" id="filterPlace" placeholder="Luogo" />
+
+          <select id="filterStatus">
+            <option value="">Tutti gli stati</option>
+            <option value="open">Aperta</option>
+            <option value="checking">In verifica</option>
+            <option value="resolved">Risolta</option>
+            <option value="archived">Archiviata</option>
+          </select>
+        </div>
+
+        <!-- Contenitore generato dinamicamente con le segnalazioni -->
+        <div id="reportsGrid" class="reports-grid"></div>
+      </section>
+
+      <!-- ==================== MAPPA ==================== -->
+      <section id="mapPage" class="page-section content-section">
+        <!-- Intestazione della mappa -->
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">GEOGRAFIA DELLE COSE</p>
+            <h2>Mappa</h2>
+          </div>
+        </div>
+
+        <p class="section-intro">
+          Esplora i luoghi in cui gli oggetti sono stati smarriti o ritrovati.
+        </p>
+
+        <!-- Mappa Leaflet con le segnalazioni pubbliche -->
+        <div id="publicMap" class="large-map"></div>
+      </section>
+
+      <!-- ==================== NUOVA SEGNALAZIONE ==================== -->
+      <section id="newReport" class="page-section content-section">
+        <!-- Intestazione del modulo -->
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">NUOVO ELEMENTO</p>
+            <h2>Segnala un oggetto</h2>
+          </div>
+        </div>
+
+        <!-- Avviso mostrato agli utenti non autenticati -->
+        <div id="newReportLoginNotice" class="notice hidden">
+          Devi accedere per pubblicare una segnalazione.
+          <button data-section="login">Accedi</button>
+        </div>
+
+        <!-- Modulo per creare una nuova segnalazione -->
+        <form id="reportForm" class="museum-form">
+          <div class="form-grid">
+            <!-- Scelta tra oggetto smarrito e ritrovato -->
+            <label>
+              Tipo di segnalazione
+              <select id="reportType" required>
+                <option value="lost">Oggetto smarrito</option>
+                <option value="found">Oggetto ritrovato</option>
+              </select>
+            </label>
+
+            <!-- Categoria dell'oggetto -->
+            <label>
+              Categoria
+              <select id="reportCategory" required>
+                <option value="">Seleziona</option>
+                <option value="Chiavi">Chiavi</option>
+                <option value="Documenti">Documenti</option>
+                <option value="Elettronica">Elettronica</option>
+                <option value="Abbigliamento">Abbigliamento</option>
+                <option value="Accessori">Accessori</option>
+                <option value="Libri">Libri</option>
+                <option value="Altro">Altro</option>
+              </select>
+            </label>
+
+            <!-- Titolo sintetico della segnalazione -->
+            <label class="wide">
+              Titolo
+              <input
+                id="reportTitle"
+                maxlength="80"
+                required
+                placeholder="Descrizione breve dell'oggetto"
+              />
+            </label>
+
+            <!-- Descrizione visibile pubblicamente -->
+            <label class="wide">
+              Descrizione pubblica
+              <textarea
+                id="reportDescription"
+                rows="5"
+                maxlength="800"
+                required
+                placeholder="Descrivi caratteristiche, colore e altri dettagli visibili."
+              ></textarea>
+            </label>
+
+            <!-- Informazione privata utilizzabile durante la verifica -->
+            <label class="wide">
+              Dettaglio privato di verifica
+              <input
+                id="privateDetail"
+                maxlength="200"
+                placeholder="Un dettaglio da non rendere pubblico"
+              />
+            </label>
+
+            <!-- Luogo dello smarrimento o ritrovamento -->
+            <label>
+              Luogo
+              <input id="reportPlace" required placeholder="Es. Biblioteca" />
+            </label>
+
+            <!-- Data dell'evento -->
+            <label>
+              Data
+              <input type="date" id="reportDate" required />
+            </label>
+
+            <!-- Caricamento facoltativo dell'immagine -->
+            <label class="wide">
+              Immagine
+              <input
+                type="file"
+                id="reportImage"
+                accept="image/jpeg,image/png,image/webp"
+              />
+            </label>
+          </div>
+
+          <!-- Selezione geografica della posizione -->
+          <div class="map-selection">
+            <div class="map-selection-text">
+              <strong>Posizione sulla mappa</strong>
+              <span>
+                Clicca sulla mappa per indicare il luogo dello smarrimento o
+                ritrovamento.
+              </span>
+            </div>
+
+            <div id="reportMap" class="form-map"></div>
+          </div>
+
+          <!-- Invio della segnalazione alla moderazione -->
+          <button class="button dark-button" type="submit">
+            Invia alla moderazione
+          </button>
+        </form>
+      </section>
+
+      <!-- ==================== DASHBOARD ==================== -->
+      <section id="dashboard" class="page-section content-section">
+        <!-- Intestazione dell'area personale -->
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">AREA PERSONALE</p>
+            <h2>Dashboard</h2>
+          </div>
+        </div>
+
+        <!-- Statistiche personali generate da JavaScript -->
+        <div id="dashboardStats" class="stats-grid"></div>
+
+        <!-- Elenco delle segnalazioni dell'utente -->
+        <div class="dashboard-block">
+          <h3>Le mie segnalazioni</h3>
+          <div id="myReports" class="reports-grid compact"></div>
+        </div>
+
+        <!-- Elenco delle notifiche ricevute -->
+        <div class="dashboard-block">
+          <h3>Notifiche</h3>
+          <div id="notificationList" class="list-container"></div>
+        </div>
+      </section>
+
+      <!-- ==================== MATCH ==================== -->
+      <section id="matches" class="page-section content-section">
+        <!-- Intestazione della sezione di matching -->
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">CORRISPONDENZE</p>
+            <h2>Match</h2>
+          </div>
+        </div>
+
+        <!-- Schede per match automatici e già proposti -->
+        <div class="tabs">
+          <button class="tab active" data-match-tab="suggested">
+            Suggeriti
+          </button>
+
+          <button class="tab" data-match-tab="proposed">Proposti</button>
+        </div>
+
+        <!-- Elenco dei match generato dinamicamente -->
+        <div id="matchList" class="match-list"></div>
+      </section>
+
+      <!-- ==================== MESSAGGI ==================== -->
+      <section id="messages" class="page-section content-section">
+        <!-- Intestazione della messaggistica -->
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">CONTATTI</p>
+            <h2>Messaggi</h2>
+          </div>
+        </div>
+
+        <!-- Elenco dei messaggi dell'utente -->
+        <div id="messageList" class="list-container"></div>
+      </section>
+
+      <!-- ==================== MODERAZIONE ==================== -->
+      <section id="moderation" class="page-section content-section">
+        <!-- Intestazione dell'area moderatore -->
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">REVISIONE</p>
+            <h2>Moderazione</h2>
+          </div>
+        </div>
+
+        <!-- Segnalazioni in attesa di approvazione -->
+        <div id="moderationList" class="reports-grid"></div>
+      </section>
+
+      <!-- ==================== LOGIN ==================== -->
+      <section id="login" class="page-section auth-section">
+        <!-- Modulo di accesso -->
+        <div class="auth-panel">
+          <p class="eyebrow dark">AREA RISERVATA</p>
+          <h2>Accedi</h2>
+
+          <form id="loginForm">
+            <label>
+              Email
+              <input type="email" id="loginEmail" required />
+            </label>
+
+            <label>
+              Password
+              <input type="password" id="loginPassword" required />
+            </label>
+
+            <button class="button dark-button" type="submit">Accedi</button>
+          </form>
+
+          <!-- Collegamento alla registrazione -->
+          <p class="auth-switch">
+            Non hai un account?
+            <button data-section="register">Registrati</button>
+          </p>
+        </div>
+      </section>
+
+      <!-- ==================== REGISTRAZIONE ==================== -->
+      <section id="register" class="page-section auth-section">
+        <!-- Modulo per creare un nuovo account -->
+        <div class="auth-panel">
+          <p class="eyebrow dark">NUOVO VISITATORE</p>
+          <h2>Registrati</h2>
+
+          <form id="registerForm">
+            <label>
+              Nome
+              <input id="registerName" required maxlength="60" />
+            </label>
+
+            <label>
+              Email
+              <input type="email" id="registerEmail" required />
+            </label>
+
+            <label>
+              Password
+              <input
+                type="password"
+                id="registerPassword"
+                minlength="8"
+                required
+              />
+            </label>
+
+            <!-- Selezione del ruolo, incluso il moderatore dimostrativo -->
+            <!-- Il ruolo è assegnato dal server: la registrazione pubblica crea soltanto utenti normali. -->
+            <button class="button dark-button" type="submit">
+              Crea account
+            </button>
+          </form>
+
+          <!-- Collegamento alla pagina di accesso -->
+          <p class="auth-switch">
+            Hai già un account?
+            <button data-section="login">Accedi</button>
+          </p>
+        </div>
+      </section>
+
+      <!-- ==================== DETTAGLIO SEGNALAZIONE ==================== -->
+      <section id="reportDetail" class="page-section content-section">
+        <!-- Contenuto della segnalazione inserito da JavaScript -->
+        <div id="reportDetailContent"></div>
+      </section>
+    </main>
+
+    <!-- Finestra modale riutilizzata per messaggi, match, verifica e QR -->
+    <div class="modal-overlay hidden" id="modalOverlay">
+      <div class="modal">
+        <!-- Chiusura della finestra modale -->
+        <button class="modal-close" id="modalClose" aria-label="Chiudi">
+          ×
+        </button>
+
+        <!-- Contenuto dinamico della finestra -->
+        <div id="modalContent"></div>
+      </div>
+    </div>
+
+    <!-- Contenitore dei messaggi temporanei -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Piè di pagina del sito -->
+    <footer>
+      <div>
+        <strong>Museo delle Cose Perdute</strong>
+        <p>Archivio digitale per oggetti smarriti e ritrovati.</p>
+      </div>
+
+      <div class="footer-code">MCP</div>
+    </footer>
+
+    <!-- Libreria JavaScript Leaflet per le mappe -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Libreria per generare i QR Code -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <!-- Logica JavaScript dell'applicazione -->
+    <script src="script.js"></script>
+  </body>
+</html>

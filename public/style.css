@@ -1,0 +1,1126 @@
+/* Applicazione del box model corretto a tutti gli elementi */
+* {
+  box-sizing: border-box;
+}
+/* Definizione di colori e dimensioni riutilizzabili */
+:root {
+  --black: #080808;
+  --near-black: #111111;
+  --dark-gray: #1b1b1b;
+  --gray: #686868;
+  --light-gray: #e9e9e5;
+  --paper: #f4f4ef;
+  --white: #ffffff;
+  --accent: #b7ff3c;
+  --blue: #587cff;
+  --orange: #ff8736;
+  --red: #e65353;
+  --header-height: 78px;
+}
+/* Rende più fluido lo scorrimento della pagina */
+html {
+  scroll-behavior: smooth;
+}
+/* Impostazione aspetto generale e font del sito */
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--black);
+  font-family: Arial, Helvetica, sans-serif;
+}
+/* Mantiene lo stesso font nei controlli */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+/* Mostra il cursore interattivo sui pulsanti */
+button {
+  cursor: pointer;
+}
+/* Evidenzia gli elementi selezionati da tastiera */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+/* Nasconde gli elementi non necessari */
+.hidden {
+  display: none !important;
+}
+/* ==================== HEADER ==================== */
+/* Creazione dell'intestazione fissa nera */
+.site-header {
+  height: var(--header-height);
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 25px;
+  padding: 0 32px;
+  color: var(--white);
+  background: rgba(8, 8, 8, 0.96);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+}
+/* Dimensionamento pulsante hamburger */
+.menu-button {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+/* Disegna le tre linee del menu */
+.menu-button span {
+  width: 27px;
+  height: 2px;
+  background: white;
+  display: block;
+}
+/* Allineamento logo e nome del sito */
+.brand {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 0;
+  background: transparent;
+  color: white;
+  padding: 0;
+}
+/* Creazione del simbolo quadrato MCP */
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background: var(--white);
+  color: var(--black);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+/* Definizione dello stile del nome del sito */
+.brand-name {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+/* Allineamento notifiche e nome utente */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 0.78rem;
+  color: #bdbdbd;
+}
+/* Definizione del pulsante delle notifiche */
+.notification-button {
+  border: 1px solid #444;
+  background: transparent;
+  color: white;
+  padding: 8px 12px;
+}
+/* Crea i contatori di notifiche e messaggi */
+.counter {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  margin-left: 5px;
+  border-radius: 20px;
+  background: var(--accent);
+  color: black;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+/* ==================== MENU ==================== */
+/* Oscura la pagina quando il menu laterale è aperto */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1090;
+  background: rgba(0, 0, 0, 0.55);
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.3s;
+}
+/* Mostra lo sfondo del menu */
+.menu-overlay.open {
+  visibility: visible;
+  opacity: 1;
+}
+/* Posiziona il menu laterale fuori dallo schermo */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(440px, 90vw);
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  color: white;
+  background: var(--black);
+  transform: translateX(-101%);
+  transition: transform 0.35s ease;
+}
+/* Scorrimento menu all'interno della pagina */
+.side-menu.open {
+  transform: translateX(0);
+}
+/* Imposta l'intestazione del menu */
+.menu-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #333;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+}
+/* Definizione del pulsante di chiusura */
+.menu-top button {
+  border: 0;
+  background: transparent;
+  color: white;
+  font-size: 2.2rem;
+  font-weight: 200;
+}
+/* Dispone verticalmente i collegamenti */
+.side-menu nav {
+  display: flex;
+  flex-direction: column;
+  padding-top: 25px;
+}
+/* Definizione dello stile delle voci del menu */
+.side-menu nav button,
+.menu-account button {
+  width: 100%;
+  padding: 15px 0;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid #292929;
+  background: transparent;
+  color: white;
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  transition:
+    color 0.2s,
+    padding-left 0.2s;
+}
+/* Evidenzia le voci del menu al passaggio del mouse */
+.side-menu nav button:hover,
+.menu-account button:hover {
+  color: var(--accent);
+  padding-left: 8px;
+}
+/* Posiziona i comandi account in fondo al menu */
+.menu-account {
+  margin-top: auto;
+}
+/* ==================== SEZIONI ==================== */
+/* Nasconde le sezioni non attive */
+.page-section {
+  display: none;
+}
+/* Mostra la sezione selezionata */
+.page-section.active {
+  display: block;
+}
+/* Imposta spaziatura e altezza delle sezioni interne */
+.content-section {
+  min-height: 100vh;
+  padding: calc(var(--header-height) + 70px) 6vw 100px;
+}
+/* Allinea titolo e informazioni delle sezioni */
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  padding-bottom: 30px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #bcbcb6;
+}
+/* Definizione dei grandi titoli in stile museale */
+.section-heading h2 {
+  margin: 0;
+  font-size: clamp(3.2rem, 8vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+  font-weight: 500;
+}
+/* Definizione delle informazioni secondarie dell'intestazione */
+.section-heading > span {
+  color: var(--gray);
+  font-size: 0.85rem;
+}
+/* Definizione dei testi introduttivi delle sezioni */
+.section-intro {
+  max-width: 650px;
+  margin-top: -15px;
+  margin-bottom: 35px;
+  color: var(--gray);
+  line-height: 1.7;
+}
+/* ==================== HOME ==================== */
+/* Crea la grande schermata introduttiva scura */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: calc(var(--header-height) + 60px) 7vw 70px;
+  display: none;
+  align-items: center;
+  color: white;
+  background: radial-gradient(
+    circle at 76% 38%,
+    #292929 0,
+    #141414 28%,
+    #080808 58%
+  );
+}
+/* Mostra la home quando è attiva */
+.hero.active {
+  display: flex;
+}
+/* Disegna il primo cerchio decorativo */
+.hero::before {
+  content: "";
+  position: absolute;
+  width: min(42vw, 620px);
+  height: min(42vw, 620px);
+  right: 5vw;
+  top: 19%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+}
+/* Disegna il secondo cerchio decorativo */
+.hero::after {
+  content: "";
+  position: absolute;
+  width: min(28vw, 420px);
+  height: min(28vw, 420px);
+  right: 12vw;
+  top: 27%;
+  border: 1px solid rgba(183, 255, 60, 0.24);
+  border-radius: 50%;
+}
+/* Mantiene il contenuto sopra gli elementi decorativi */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1000px;
+}
+/* Definisce le piccole etichette delle sezioni */
+.eyebrow {
+  margin: 0 0 28px;
+  color: #9b9b9b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+}
+/* Variante scura delle etichette */
+.eyebrow.dark {
+  color: #696963;
+}
+/* Definizione del grande titolo della home */
+.hero h1 {
+  margin: 0;
+  max-width: 1050px;
+  font-size: clamp(4.2rem, 10vw, 10rem);
+  line-height: 0.82;
+  letter-spacing: -0.075em;
+  font-weight: 500;
+}
+/* Definizione del testo introduttivo */
+.hero-text {
+  max-width: 590px;
+  margin: 42px 0 0;
+  color: #b8b8b8;
+  font-size: 1.12rem;
+  line-height: 1.65;
+}
+/* Allinea i pulsanti principali della home */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 38px;
+}
+/* Crea il grande numero decorativo */
+.hero-number {
+  position: absolute;
+  right: 4vw;
+  bottom: 3vw;
+  color: rgba(255, 255, 255, 0.15);
+  font-size: clamp(5rem, 12vw, 12rem);
+  font-weight: 700;
+  letter-spacing: -0.08em;
+}
+/* ==================== BOTTONI ==================== */
+/* Stile generale dei pulsanti principali */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 49px;
+  padding: 13px 22px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.2s;
+}
+/* Solleva leggermente il pulsante al passaggio del mouse */
+.button:hover {
+  transform: translateY(-2px);
+}
+/* Variante chiara del pulsante */
+.button.light {
+  background: white;
+  color: black;
+}
+/* Evidenzia il pulsante chiaro */
+.button.light:hover {
+  background: var(--accent);
+}
+/* Variante trasparente con bordo */
+.button.outline {
+  border-color: #555;
+  background: transparent;
+  color: white;
+}
+/* Inverte il pulsante outline al passaggio del mouse */
+.button.outline:hover {
+  border-color: white;
+  background: white;
+  color: black;
+}
+/* Variante nera del pulsante */
+.dark-button {
+  background: black;
+  color: white;
+}
+/* Schiarisce leggermente il pulsante nero */
+.dark-button:hover {
+  background: #292929;
+}
+/* Stile dei pulsanti secondari */
+.small-button {
+  padding: 9px 13px;
+  border: 1px solid #bbb;
+  background: transparent;
+  color: black;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+/* Evidenzia i pulsanti secondari */
+.small-button:hover {
+  background: black;
+  border-color: black;
+  color: white;
+}
+/* Evidenzia le azioni potenzialmente distruttive */
+.danger-button {
+  border-color: var(--red);
+  color: #a72f2f;
+}
+/* ==================== FILTRI ==================== */
+/* Dispone i filtri dell'archivio su una griglia */
+.filters {
+  display: grid;
+  grid-template-columns: 2fr repeat(4, 1fr);
+  gap: 1px;
+  margin-bottom: 45px;
+  background: #aaa;
+  border: 1px solid #aaa;
+}
+/* Uniforma campi e menu dei filtri */
+.filters input,
+.filters select {
+  width: 100%;
+  min-height: 55px;
+  padding: 0 15px;
+  border: 0;
+  background: white;
+}
+/* ==================== SEGNALAZIONI ==================== */
+/* Organizza le schede delle segnalazioni */
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: #c4c4be;
+  border: 1px solid #c4c4be;
+}
+/* Riduce a due colonne la griglia della dashboard */
+.reports-grid.compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+/* Definizione dell'aspetto di una singola scheda */
+.report-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+/* Evidenzia la scheda al passaggio del mouse */
+.report-card:hover {
+  background: white;
+}
+/* Definizione dell'area dell'immagine */
+.report-image {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #181818;
+}
+/* Adatta l'immagine alla scheda */
+.report-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+/* Ingrandisce leggermente l'immagine al passaggio */
+.report-card:hover .report-image img {
+  transform: scale(1.025);
+}
+/* Mostra un segnaposto quando manca l'immagine */
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 30px;
+  color: #777;
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+}
+/* Etichetta il tipo di segnalazione */
+.card-tag {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 7px 10px;
+  background: white;
+  color: black;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+/* Evidenzia gli oggetti ritrovati */
+.card-tag.found {
+  background: var(--accent);
+}
+/* Definizione del contenuto testuale della scheda */
+.card-body {
+  padding: 25px;
+}
+/* Allinea categoria e data */
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #72726d;
+  font-size: 0.73rem;
+}
+/* Definizione del titolo della segnalazione */
+.card-body h3 {
+  margin: 20px 0 10px;
+  font-size: 1.55rem;
+  letter-spacing: -0.04em;
+}
+/* Definizione della descrizione della segnalazione */
+.card-body p {
+  margin: 0;
+  color: #555;
+  line-height: 1.55;
+}
+/* Allinea stato e pulsante dettagli */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 0 25px 25px;
+  margin-top: auto;
+}
+/* Definizione dell'indicatore dello stato */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+/* Crea il punto colorato dello stato */
+.status::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #777;
+}
+/* Colore dello stato aperto */
+.status.open::before {
+  background: var(--accent);
+}
+/* Colore dello stato in verifica */
+.status.checking::before {
+  background: var(--orange);
+}
+/* Colore dello stato risolto */
+.status.resolved::before {
+  background: var(--blue);
+}
+/* Mostra un messaggio quando una lista è vuota */
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 70px 30px;
+  background: var(--paper);
+  text-align: center;
+  color: #777;
+}
+/* ==================== FORM ==================== */
+/* Limita la larghezza dei moduli principali */
+.museum-form,
+.auth-panel {
+  max-width: 1000px;
+}
+/* Dispone i campi del modulo su due colonne */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+/* Organizza etichette e relativi campi */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+/* Permette ai campi principali di occupare due colonne */
+label.wide {
+  grid-column: 1 / -1;
+}
+/* Uniforma l'aspetto dei campi */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 14px 0;
+  border: 0;
+  border-bottom: 1px solid #999;
+  border-radius: 0;
+  background: transparent;
+  color: black;
+  font-size: 1rem;
+}
+/* Consente il ridimensionamento verticale delle aree di testo */
+textarea {
+  resize: vertical;
+}
+/* Separazione della mappa dal resto del modulo */
+.map-selection {
+  margin: 45px 0 30px;
+}
+/* Organizza il testo introduttivo della mappa */
+.map-selection-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+/* Definizione del testo secondario della mappa */
+.map-selection-text span {
+  color: #777;
+  font-size: 0.82rem;
+}
+/* Definizione delle dimensioni della mappa del modulo */
+.form-map {
+  height: 380px;
+  background: #ddd;
+}
+/* Definizione delle dimensioni della mappa pubblica */
+.large-map {
+  width: 100%;
+  height: 65vh;
+  min-height: 480px;
+  background: #ddd;
+}
+/* Evidenzia gli avvisi importanti */
+.notice {
+  max-width: 800px;
+  margin-bottom: 30px;
+  padding: 18px;
+  background: #fff3c7;
+}
+/* Definizione dei link-pulsante negli avvisi */
+.notice button,
+.auth-switch button {
+  border: 0;
+  border-bottom: 1px solid;
+  background: transparent;
+  font-weight: 700;
+}
+/* ==================== AUTENTICAZIONE ==================== */
+/* Imposta dimensioni e spaziatura delle pagine account */
+.auth-section {
+  min-height: 100vh;
+  padding: calc(var(--header-height) + 80px) 6vw 80px;
+}
+/* Centra il pannello di autenticazione */
+.auth-panel {
+  width: min(600px, 100%);
+  margin: 0 auto;
+}
+/* Definizione dei titoli delle pagine di accesso */
+.auth-panel h2 {
+  margin: 0 0 50px;
+  font-size: clamp(4rem, 9vw, 8rem);
+  line-height: 0.85;
+  letter-spacing: -0.07em;
+  font-weight: 500;
+}
+/* Separa verticalmente i campi di autenticazione */
+.auth-panel form {
+  display: grid;
+  gap: 28px;
+}
+/* Definizione del collegamento tra login e registrazione */
+.auth-switch {
+  margin-top: 25px;
+  color: #666;
+  font-size: 0.85rem;
+}
+/* ==================== DASHBOARD ==================== */
+/* Organizza le statistiche personali */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin-bottom: 60px;
+  background: #bbb;
+  border: 1px solid #bbb;
+}
+/* Definizione di una singola statistica */
+.stat-card {
+  padding: 25px;
+  background: white;
+}
+/* Evidenzia il valore numerico */
+.stat-card strong {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 2.8rem;
+  letter-spacing: -0.06em;
+}
+/* Definizione dell'etichetta della statistica */
+.stat-card span {
+  color: #777;
+  font-size: 0.75rem;
+}
+/* Separa i blocchi della dashboard */
+.dashboard-block {
+  margin-top: 55px;
+}
+/* Definizione dei sottotitoli della dashboard */
+.dashboard-block > h3 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+/* ==================== LISTE E MATCH ==================== */
+/* Crea il bordo superiore delle liste */
+.list-container,
+.match-list {
+  border-top: 1px solid #aaa;
+}
+/* Organizza ogni elemento delle liste */
+.list-item,
+.match-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 25px;
+  padding: 24px 0;
+  border-bottom: 1px solid #aaa;
+}
+/* Definizione dei titoli delle liste */
+.list-item h3,
+.match-card h3 {
+  margin: 0 0 8px;
+}
+/* Definizione del testo secondario delle liste */
+.list-item p,
+.match-card p {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+}
+/* Definizione data e ora delle interazioni */
+.list-date {
+  color: #888;
+  font-size: 0.72rem;
+}
+/* Mostra graficamente la percentuale di compatibilità */
+.match-score {
+  display: grid;
+  place-items: center;
+  width: 70px;
+  height: 70px;
+  border: 1px solid #aaa;
+  border-radius: 50%;
+  font-weight: 800;
+}
+/* Allinea le schede Suggeriti e Proposti */
+.tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 35px;
+}
+/* Definizione di una scheda del menu match */
+.tab {
+  padding: 10px 17px;
+  border: 1px solid #aaa;
+  background: transparent;
+}
+/* Evidenzia la scheda match attiva */
+.tab.active {
+  background: black;
+  color: white;
+}
+/* Evidenzia le informazioni della verifica */
+.verification-box {
+  margin-top: 20px;
+  padding: 18px 20px;
+  border-left: 4px solid var(--black);
+  background: #e8e8e3;
+}
+/* Separa le intestazioni della verifica */
+.verification-box strong {
+  display: block;
+  margin-bottom: 7px;
+}
+/* Definizione del testo della verifica */
+.verification-box p {
+  margin: 5px 0;
+  color: #454545;
+}
+/* Mostra lo stato corrente della verifica */
+.verification-state {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 5px 8px;
+  background: black;
+  color: white;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+/* Allinea i comandi della verifica */
+.verification-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+/* ==================== DETTAGLIO ==================== */
+/* Divisione immagine e informazioni della segnalazione */
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 60px;
+}
+/* Definizione dell'area dell'immagine di dettaglio */
+.detail-image {
+  min-height: 480px;
+  background: #111;
+}
+/* Adatta l'immagine al contenitore */
+.detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Definizione del titolo della pagina dettaglio */
+.detail-info h2 {
+  margin: 15px 0 25px;
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  font-weight: 500;
+}
+/* Definizione della descrizione dettagliata */
+.detail-info > p {
+  color: #555;
+  line-height: 1.7;
+}
+/* Organizzazione dei dati tecnici della segnalazione */
+.detail-data {
+  margin: 35px 0;
+  border-top: 1px solid #aaa;
+}
+/* Crea una riga informativa del dettaglio */
+.detail-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  padding: 14px 0;
+  border-bottom: 1px solid #aaa;
+  font-size: 0.85rem;
+}
+/* Evidenzia le etichette dei dati */
+.detail-row span:first-child {
+  color: #777;
+}
+/* Allinea i comandi della segnalazione */
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+/* Separa lo storico dal resto della pagina */
+.history {
+  margin-top: 50px;
+}
+/* Definizione di ogni voce dello storico */
+.history-item {
+  padding: 13px 0;
+  border-bottom: 1px solid #ccc;
+  color: #666;
+  font-size: 0.82rem;
+}
+/* ==================== MODAL ==================== */
+/* Crea lo sfondo della finestra modale */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.75);
+}
+/* Definizione del contenitore della finestra */
+.modal {
+  position: relative;
+  width: min(600px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 35px;
+  background: white;
+}
+/* Posiziona il pulsante di chiusura */
+.modal-close {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  border: 0;
+  background: transparent;
+  font-size: 2rem;
+}
+/* Definizione dei titoli delle finestre */
+.modal h2 {
+  margin-top: 0;
+  font-size: 2.5rem;
+  letter-spacing: -0.05em;
+}
+/* Separa i campi dei moduli nelle finestre */
+.modal form {
+  display: grid;
+  gap: 20px;
+}
+/* Centramento del QR Code */
+#qrCode {
+  display: grid;
+  place-items: center;
+  padding: 30px 0;
+}
+/* ==================== TOAST ==================== */
+/* Posiziona le notifiche temporanee */
+.toast-container {
+  position: fixed;
+  z-index: 3000;
+  right: 25px;
+  bottom: 25px;
+  display: grid;
+  gap: 10px;
+}
+/* Definizione dell'aspetto della notifica temporanea */
+.toast {
+  max-width: 360px;
+  padding: 15px 18px;
+  background: black;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: toastIn 0.25s ease;
+}
+/* Crea l'animazione di entrata delle notifiche */
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ==================== FOOTER ==================== */
+/* Definizione del piè di pagina nero */
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  padding: 60px 6vw;
+  background: black;
+  color: white;
+}
+/* Definizione del testo secondario del footer */
+footer p {
+  color: #888;
+}
+/* Crea la grande sigla decorativa MCP */
+.footer-code {
+  color: #333;
+  font-size: clamp(4rem, 10vw, 10rem);
+  line-height: 0.7;
+  font-weight: 800;
+  letter-spacing: -0.08em;
+}
+/* ==================== MAPPA LEAFLET ==================== */
+/* Uniforma il font utilizzato nelle mappe */
+.leaflet-container {
+  font-family: Arial, Helvetica, sans-serif;
+}
+/* Definizione dei marcatori personalizzati */
+.custom-map-marker {
+  width: 18px;
+  height: 18px;
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+/* Colore dei marcatori degli oggetti smarriti */
+.custom-map-marker.lost {
+  background: #111;
+}
+/* Colore dei marcatori degli oggetti ritrovati */
+.custom-map-marker.found {
+  background: var(--accent);
+}
+/* ==================== RESPONSIVE ==================== */
+/* Adatta il layout a tablet e schermi medi */
+@media (max-width: 1000px) {
+  .reports-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .filters input:first-child {
+    grid-column: 1 / -1;
+  }
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+/* Adatta completamente il sito agli smartphone */
+@media (max-width: 700px) {
+  :root {
+    --header-height: 68px;
+  }
+  .site-header {
+    padding: 0 18px;
+  }
+  .brand-name {
+    display: none;
+  }
+  .header-right > span {
+    display: none;
+  }
+  .hero {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  .hero h1 {
+    font-size: clamp(4rem, 20vw, 7rem);
+  }
+  .hero::before,
+  .hero::after {
+    display: none;
+  }
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .content-section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .section-heading h2 {
+    font-size: clamp(3.5rem, 18vw, 6rem);
+  }
+  .reports-grid,
+  .reports-grid.compact {
+    grid-template-columns: 1fr;
+  }
+  .filters {
+    grid-template-columns: 1fr;
+  }
+  .filters input:first-child {
+    grid-column: auto;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  label.wide {
+    grid-column: auto;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .list-item,
+  .match-card {
+    grid-template-columns: 1fr;
+  }
+  .detail-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  .detail-image {
+    min-height: 300px;
+  }
+  footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
